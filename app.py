@@ -1,17 +1,25 @@
 import streamlit as st
-from moviepy.editor import VideoFileClip
+import ffmpeg
+
 from pydub import AudioSegment
+from io import BytesIO
 
 # Function to convert video to audio
 def video_to_audio(video_file):
-    video = VideoFileClip(video_file)
+    # Convert the video to audio using ffmpeg-python
     audio_file = video_file.name.replace(".mp4", ".mp3")  # Change the extension to mp3
     audio_file = audio_file.replace(" ", "_")  # Replace spaces with underscores
     audio_file = "temp_" + audio_file  # Prefix with 'temp_' to avoid conflicts in filenames
 
-    # Extract audio from video using moviepy and save it as mp3
-    audio = video.audio
-    audio.write_audiofile(audio_file)
+    video_bytes = video_file.read()
+    audio_bytes, _ = (
+        ffmpeg.input("pipe:0")
+        .output(audio_file, format="mp3", acodec="libmp3lame", loglevel="error")
+        .run(input=video_bytes, capture_stdout=True)
+    )
+
+    with open(audio_file, "wb") as f:
+        f.write(audio_bytes)
 
     return audio_file
 
