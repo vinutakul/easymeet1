@@ -1,5 +1,6 @@
 import streamlit as st
 from moviepy.editor import VideoFileClip
+from pydub import AudioSegment
 
 # Function to convert video to audio
 def video_to_audio(video_file):
@@ -7,7 +8,11 @@ def video_to_audio(video_file):
     audio_file = video_file.name.replace(".mp4", ".mp3")  # Change the extension to mp3
     audio_file = audio_file.replace(" ", "_")  # Replace spaces with underscores
     audio_file = "temp_" + audio_file  # Prefix with 'temp_' to avoid conflicts in filenames
-    video.audio.write_audiofile(audio_file)
+
+    # Extract audio from video using moviepy and save it as mp3
+    audio = video.audio
+    audio.write_audiofile(audio_file)
+
     return audio_file
 
 # Function to generate video summary
