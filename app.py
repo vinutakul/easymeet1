@@ -1,10 +1,12 @@
 import streamlit as st
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip
 
 # Function to convert video to audio
 def video_to_audio(video_file):
     video = VideoFileClip(video_file)
-    audio_file = video_file.replace(".mp4", ".mp3")  # Change the extension to mp3
+    audio_file = video_file.name.replace(".mp4", ".mp3")  # Change the extension to mp3
+    audio_file = audio_file.replace(" ", "_")  # Replace spaces with underscores
+    audio_file = "temp_" + audio_file  # Prefix with 'temp_' to avoid conflicts in filenames
     video.audio.write_audiofile(audio_file)
     return audio_file
 
